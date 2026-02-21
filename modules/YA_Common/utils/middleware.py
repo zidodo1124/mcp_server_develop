@@ -31,17 +31,15 @@ def exception_handler(func):
         except MCPException as e:
             error = e.to_error().to_dict()
             logger.error(f"MCPException: {e.code} - {e.message} | details={e.details}")
-
-            sys.stdout.write(json.dumps(error, ensure_ascii=False) + "\n")
-            sys.stdout.flush()
+            # 写入日志而不是直接写入 stdout，避免被底层流解析器当作消息
+            logger.error(json.dumps(error, ensure_ascii=False))
         except Exception as e:
             from utils.errors import InternalException
 
             ex = InternalException(str(e), {"traceback": traceback.format_exc()})
             error = ex.to_error().to_dict()
             logger.exception("Unhandled exception")
-            sys.stdout.write(json.dumps(error, ensure_ascii=False) + "\n")
-            sys.stdout.flush()
+            logger.error(json.dumps(error, ensure_ascii=False))
 
     return wrapper
 
@@ -60,15 +58,13 @@ def async_exception_handler(func: Callable[..., Coroutine[Any, Any, Any]]):
         except MCPException as e:
             error = e.to_error().to_dict()
             logger.error(f"MCPException: {e.code} - {e.message} | details={e.details}")
-            sys.stdout.write(json.dumps(error, ensure_ascii=False) + "\n")
-            sys.stdout.flush()
+            logger.error(json.dumps(error, ensure_ascii=False))
             return None
         except Exception as e:
             ex = InternalException(str(e), {"traceback": traceback.format_exc()})
             error = ex.to_error().to_dict()
             logger.exception("Unhandled exception")
-            sys.stdout.write(json.dumps(error, ensure_ascii=False) + "\n")
-            sys.stdout.flush()
+            logger.error(json.dumps(error, ensure_ascii=False))
             return None
 
     return wrapper

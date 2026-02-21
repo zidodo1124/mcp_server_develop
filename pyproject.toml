@@ -12,4 +12,11 @@ dependencies = [
     "mcp[cli]>=1.14.0",
     "pyyaml>=6.0.2",
     "ruff>=0.14.4",
+    "jieba>=0.42.1",          # 中文分词
+    "spacy>=3.7.4",           # 实体识别
+    "py2neo>=2021.2.3",       # 操作Neo4j知识图谱
+    "networkx>=3.2.1",        # 图谱可视化/构建
+    "pydantic>=2.5.2",        # 数据校验
+    "matplotlib>=3.8.0",      # 用于绘制 KG 可视化导出（PNG）
+    "python-pptx>=0.6.21",    # 解析 PPTX 文件
 ]

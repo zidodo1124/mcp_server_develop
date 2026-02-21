@@ -5,6 +5,9 @@ from .config import (
     get_server_description,
     get_server_version,
 )
+from .logger import get_logger
+
+logger = get_logger("helpers")
 
 
 def print_server_banner():
@@ -21,8 +24,8 @@ def print_server_banner():
     description = get_server_description()
 
     ascii_name = text2art(name, font="bubble")
-    print(ascii_name)
-    print(f"Author: {author}")
-    print(f"Version: {version}")
-    print(f"{description}")
-    print("=" * 60)
+    logger.info("\n" + ascii_name)
+    logger.info(f"Author: {author}")
+    logger.info(f"Version: {version}")
+    logger.info(f"{description}")
+    logger.info("=" * 60)

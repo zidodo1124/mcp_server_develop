@@ -4,6 +4,8 @@ import uvicorn
 from starlette.applications import Starlette
 from starlette.requests import Request
 from starlette.routing import Mount, Route
+import json
+from starlette.responses import JSONResponse
 
 from mcp.server.fastmcp import FastMCP
 from mcp.server.sse import SseServerTransport
@@ -87,6 +89,31 @@ class YA_MCPServer:
     ) -> Starlette:
         sse = SseServerTransport("/messages/")
 
+        # in-memory results store for polling: req_id -> {status, export_path, result}
+        results_store: dict[str, dict] = {}
+
+        # wrap original handle_post_message to capture incoming request id and arguments
+        orig_handle = sse.handle_post_message
+
+        async def handle_post_and_capture(scope, receive, send):
+            # create a Request to inspect body
+            req = Request(scope, receive)
+            try:
+                body = await req.body()
+                try:
+                    msg = json.loads(body)
+                    rid = msg.get("id")
+                    args = msg.get("params", {}).get("arguments", {})
+                    export_path = args.get("export_path") if isinstance(args, dict) else None
+                    if rid is not None:
+                        results_store[str(rid)] = {"status": "accepted", "export_path": export_path, "result": None}
+                except Exception:
+                    pass
+            except Exception:
+                pass
+
+            return await orig_handle(scope, receive, send)
+
         async def handle_sse(request: Request) -> None:
             async with sse.connect_sse(
                 request.scope,
@@ -99,11 +126,35 @@ class YA_MCPServer:
                     mcp_server.create_initialization_options(),
                 )
 
+        # expose a simple polling endpoint for clients to fetch results by request id
+        async def results_endpoint(request: Request):
+            req_id = request.path_params.get("req_id")
+            if not req_id:
+                return JSONResponse({"error": "missing req_id"}, status_code=400)
+            entry = results_store.get(str(req_id))
+            if not entry:
+                return JSONResponse({"status": "not_found"}, status_code=404)
+            # if result not yet present, try to check filesystem if export_path exists
+            if entry.get("result") is None and entry.get("export_path"):
+                # check common extensions
+                base = entry["export_path"]
+                candidates = [f"{base}.graphml", f"{base}.gexf", f"{base}.png"]
+                for c in candidates:
+                    if os.path.exists(c):
+                        entry["result"] = {"path": c, "format": os.path.splitext(c)[1].lstrip('.')}
+                        entry["status"] = "done"
+                        break
+            return JSONResponse(entry)
+
+        # mount the wrapped post handler so we capture requests
+        sse.handle_post_message = handle_post_and_capture
+
         app = Starlette(
             debug=debug,
             routes=[
                 Route("/", endpoint=handle_sse),
                 Mount("/messages/", app=sse.handle_post_message),
+                Route("/results/{req_id}", endpoint=results_endpoint, methods=["GET"]),
             ],
         )
 
