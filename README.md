@@ -46,3 +46,5 @@
 - 在 `sops` 模块中添加的密钥变量分别用于什么功能
 - 是否使用了 PyTorch、Tensorflow 等深度学习框架
 - 是否使用了机器学习、深度学习模型
+# mcp_server_develop
+For zmy,zzy,lw,these three person to develop their mcp server
