@@ -22,3 +22,24 @@ logging: # 日志配置
     rotation: "10 MB"
     retention: "7 days"
     compression: "zip"
+
+kg: # 知识图谱抽取与裁剪配置
+  top_k_entities: 80
+  min_occur: 2
+  min_len: 2
+  max_len: 10
+  entity_blacklist:
+    - "介绍"
+    - "概述"
+    - "总结"
+    - "总洁"
+    - "例子"
+    - "示例"
+    - "例如"
+    - "因此"
+  min_edge_weight: 2
+  centrality_metric: "pagerank" # pagerank | degree | betweenness
+  top_n_core: null
+  adaptive_top_n: true
+  keep_seed_entities: true
+  seed_from_title: true

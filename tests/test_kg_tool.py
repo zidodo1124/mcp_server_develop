@@ -29,7 +29,9 @@ def _load_kg_tool():
     # 创建父包占位
     sys.modules.setdefault("modules", types.ModuleType("modules"))
     sys.modules.setdefault("modules.YA_Common", types.ModuleType("modules.YA_Common"))
-    sys.modules.setdefault("modules.YA_Common.utils", types.ModuleType("modules.YA_Common.utils"))
+    sys.modules.setdefault(
+        "modules.YA_Common.utils", types.ModuleType("modules.YA_Common.utils")
+    )
 
     fake_logger_mod = types.ModuleType("modules.YA_Common.utils.logger")
 
@@ -71,6 +73,78 @@ class TestKGTool(unittest.TestCase):
         self.assertIsInstance(slides, list)
         self.assertGreaterEqual(len(slides), 1)
         self.assertEqual(slides[0]["text"], text)
+
+    def test_entity_filtering_and_min_occur(self):
+        kg_tool = _load_kg_tool()
+
+        original_extract_text = kg_tool._extract_text_from_pptx
+        original_entity_extractor = kg_tool._simple_entity_extraction
+        try:
+            kg_tool._extract_text_from_pptx = lambda _: [
+                "标题一\n正文一",
+                "标题二\n正文二",
+            ]
+
+            def fake_extract(text, top_k=50):
+                if "正文一" in text:
+                    return ["核心A", "核心B", "介绍", "A"]
+                return ["核心A", "核心C", "因此", "1"]
+
+            kg_tool._simple_entity_extraction = fake_extract
+
+            kg = kg_tool.extract_knowledge_graph(
+                ppt_path="dummy.pptx",
+                min_occur=2,
+                seed_from_title=False,
+                keep_seed_entities=False,
+                adaptive_top_n=False,
+                top_n_core=10,
+                min_edge_weight=1,
+            )
+
+            labels = {n["label"] for n in kg["nodes"]}
+            self.assertIn("核心A", labels)
+            self.assertNotIn("核心B", labels)
+            self.assertNotIn("核心C", labels)
+            self.assertNotIn("介绍", labels)
+            self.assertNotIn("因此", labels)
+            self.assertNotIn("A", labels)
+        finally:
+            kg_tool._extract_text_from_pptx = original_extract_text
+            kg_tool._simple_entity_extraction = original_entity_extractor
+
+    def test_edge_dedup_and_min_edge_weight(self):
+        kg_tool = _load_kg_tool()
+
+        original_extract_text = kg_tool._extract_text_from_pptx
+        original_entity_extractor = kg_tool._simple_entity_extraction
+        try:
+            kg_tool._extract_text_from_pptx = lambda _: ["第一页", "第二页"]
+
+            def fake_extract(text, top_k=50):
+                if "第一页" in text:
+                    return ["核心A", "核心A", "核心B", "概述"]
+                return ["核心A", "核心B", "例子"]
+
+            kg_tool._simple_entity_extraction = fake_extract
+
+            kg = kg_tool.extract_knowledge_graph(
+                ppt_path="dummy.pptx",
+                min_occur=1,
+                min_edge_weight=2,
+                seed_from_title=False,
+                keep_seed_entities=False,
+                adaptive_top_n=False,
+                top_n_core=10,
+            )
+
+            self.assertEqual(len(kg["nodes"]), 2)
+            self.assertEqual(len(kg["edges"]), 1)
+            self.assertEqual(kg["edges"][0]["weight"], 2)
+            self.assertNotEqual(kg["edges"][0]["source"], kg["edges"][0]["target"])
+        finally:
+            kg_tool._extract_text_from_pptx = original_extract_text
+            kg_tool._simple_entity_extraction = original_entity_extractor
 
 
 if __name__ == "__main__":

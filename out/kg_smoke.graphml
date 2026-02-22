@@ -1,0 +1,118 @@
+<?xml version='1.0' encoding='utf-8'?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd"><key id="d3" for="edge" attr.name="relation" attr.type="string"/>
+<key id="d2" for="edge" attr.name="weight" attr.type="long"/>
+<key id="d1" for="node" attr.name="score" attr.type="double"/>
+<key id="d0" for="node" attr.name="count" attr.type="long"/>
+<graph edgedefault="undirected"><node id="人工智能是机">
+  <data key="d0">1</data>
+  <data key="d1">0.142857</data>
+</node>
+<node id="器学习的重要">
+  <data key="d0">1</data>
+  <data key="d1">0.142857</data>
+</node>
+<node id="分支">
+  <data key="d0">1</data>
+  <data key="d1">0.142857</data>
+</node>
+<node id="机器学习依赖">
+  <data key="d0">1</data>
+  <data key="d1">0.142857</data>
+</node>
+<node id="数据与算法">
+  <data key="d0">1</data>
+  <data key="d1">0.142857</data>
+</node>
+<node id="深度学习是机">
+  <data key="d0">1</data>
+  <data key="d1">0.142857</data>
+</node>
+<node id="器学习的子领">
+  <data key="d0">1</data>
+  <data key="d1">0.142857</data>
+</node>
+<edge source="人工智能是机" target="器学习的重要">
+  <data key="d2">1</data>
+  <data key="d3">cooccurrence</data>
+</edge>
+<edge source="人工智能是机" target="分支">
+  <data key="d2">1</data>
+  <data key="d3">cooccurrence</data>
+</edge>
+<edge source="人工智能是机" target="机器学习依赖">
+  <data key="d2">1</data>
+  <data key="d3">cooccurrence</data>
+</edge>
+<edge source="人工智能是机" target="数据与算法">
+  <data key="d2">1</data>
+  <data key="d3">cooccurrence</data>
+</edge>
+<edge source="人工智能是机" target="深度学习是机">
+  <data key="d2">1</data>
+  <data key="d3">cooccurrence</data>
+</edge>
+<edge source="人工智能是机" target="器学习的子领">
+  <data key="d2">1</data>
+  <data key="d3">cooccurrence</data>
+</edge>
+<edge source="器学习的重要" target="分支">
+  <data key="d2">1</data>
+  <data key="d3">cooccurrence</data>
+</edge>
+<edge source="器学习的重要" target="机器学习依赖">
+  <data key="d2">1</data>
+  <data key="d3">cooccurrence</data>
+</edge>
+<edge source="器学习的重要" target="数据与算法">
+  <data key="d2">1</data>
+  <data key="d3">cooccurrence</data>
+</edge>
+<edge source="器学习的重要" target="深度学习是机">
+  <data key="d2">1</data>
+  <data key="d3">cooccurrence</data>
+</edge>
+<edge source="器学习的重要" target="器学习的子领">
+  <data key="d2">1</data>
+  <data key="d3">cooccurrence</data>
+</edge>
+<edge source="分支" target="机器学习依赖">
+  <data key="d2">1</data>
+  <data key="d3">cooccurrence</data>
+</edge>
+<edge source="分支" target="数据与算法">
+  <data key="d2">1</data>
+  <data key="d3">cooccurrence</data>
+</edge>
+<edge source="分支" target="深度学习是机">
+  <data key="d2">1</data>
+  <data key="d3">cooccurrence</data>
+</edge>
+<edge source="分支" target="器学习的子领">
+  <data key="d2">1</data>
+  <data key="d3">cooccurrence</data>
+</edge>
+<edge source="机器学习依赖" target="数据与算法">
+  <data key="d2">1</data>
+  <data key="d3">cooccurrence</data>
+</edge>
+<edge source="机器学习依赖" target="深度学习是机">
+  <data key="d2">1</data>
+  <data key="d3">cooccurrence</data>
+</edge>
+<edge source="机器学习依赖" target="器学习的子领">
+  <data key="d2">1</data>
+  <data key="d3">cooccurrence</data>
+</edge>
+<edge source="数据与算法" target="深度学习是机">
+  <data key="d2">1</data>
+  <data key="d3">cooccurrence</data>
+</edge>
+<edge source="数据与算法" target="器学习的子领">
+  <data key="d2">1</data>
+  <data key="d3">cooccurrence</data>
+</edge>
+<edge source="深度学习是机" target="器学习的子领">
+  <data key="d2">1</data>
+  <data key="d3">cooccurrence</data>
+</edge>
+</graph></graphml>
