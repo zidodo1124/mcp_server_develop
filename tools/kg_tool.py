@@ -14,7 +14,7 @@ STOPWORDS = set(
 a an the and or but if is are was were be been being have has had do does did will would shall should may might must can could of in on at to for with by from as into through during before after above below up down out off over under again further then once here there when where why how all any both each few more most other some such no nor not only own same so than too very s t can will just don should now
 的话 之类 等等 左右 上下 前后 多少 大小 高低 长短 强弱 好坏 与否 可以 能够 应该 必须 需要 想要 打算 准备 开始 结束 进行 完成 实现 达到 超过 不足 缺乏 拥有 具有 包含 包括 涉及 关于 对于 至于 由于 因为 所以 因此 从而 进而 于是 然后 接着 此外 另外 同时 同样 相反 否则 除非 只要 只有 如果 假如 假设 比如 例如 举例 比如 诸如 像 如 若 即 也就是 换句话说 总的来说 总而言之 综上所述
 引论 计划 研究 成果 浙江大学 计算机学院 人工智能研究所 高等教育出版社 文档 内容 章节 部分 框架 体系 结构 方法 技术 过程 结果 问题 原因 影响 发展 应用 系统 开发 运行 设计 优化 计算 处理 训练 推理 加速 支持 提供 实现 构建 封装 分配 调度 管理 协同 工作 能力 性能 效率 能耗 带宽 延时 资源
-John Hennessy David Patterson ACM Turing 作者 教授 院士 出版社 出版 年份 章节 页码 年度 奖励 君子 
+John Hennessy David Patterson ACM Turing 作者 教授 院士 出版社 出版 年份 章节 页码 君子 年度 奖励 燃料 方法
 """
 )
 
@@ -28,7 +28,7 @@ AI_WHITELIST = {
     "并行计算", "分布式训练", "数据并行", "张量并行", "流水线并行", "参数服务器",
     "Ring AllReduce", "类脑芯片", "智能交换机", "存算分离", "冯诺依曼结构", "人工智能算法",
     "人工智能架构与系统", "芯片", "框架", "微计算模式", "神经网络训练任务",
-    "人工智能基础软硬件", "人工智能系统", "人工智能", "神经网络", "推理", 
+    "人工智能基础软硬件", "人工智能系统", "人工智能", "神经网络", "推理", "训练"
 }
 
 # 允许保留的词性（只保留名词类）
@@ -52,7 +52,7 @@ ENTITY_BLACKLIST = {
     "使用", "101计划", "人工智能引论", "君子性非异也", "善假于物", "延伸阅读", "咸与维新",
     "John", "Hennessy", "David", "Patterson", "ACM", "Turing", "作者", "教授", "院士",
     "数据是燃料", "模型是引擎", "算力是加速器", "和推理是数据密集", "年度图灵奖",
-    "授予", "架构的", "以奖励其开创系统","奖励","君子","年度"  # 新增过滤无意义短语
+    "授予", "架构的", "以奖励其开创系统","奖励","君子","年度","燃料","方法"  # 新增过滤无意义短语
 }
 
 try:
@@ -73,28 +73,30 @@ except ImportError:
 
 logger = get_logger("YA_MCPServer_KG_Tool-AI架构")
 
-# ========== 配置项（定向优化，适配AI PPT的节点/边密度）==========
+# ========== 配置项（核心调整：扩容边缘节点 + 极致减边）==========
 def _load_kg_defaults() -> Dict:
     return {
-        "top_k_entities": 20,          # 只保留前20个最核心的节点
-        "min_occur": 5,                # 只保留出现≥5次的节点（过滤低频词）
+        "top_k_entities": 35,          # 增加总节点数（为边缘节点预留空间）
+        "min_occur": 2,                # 降低节点出现阈值，保留更多边缘节点
         "min_len": 2,
         "max_len": 10,
         "entity_blacklist": sorted(ENTITY_BLACKLIST),
-        "min_edge_cooccurrence": 5,   # 共现阈值从3提高到5，只保留强关联
+        "min_edge_cooccurrence": 4,    # 提高共现阈值，大幅减少边
         "centrality_metric": "pagerank",
-        "core_node_count": 6,
-        "subcore_node_count": 8,      # 次核心节点也减少，更聚焦
-        "core_radius": 0.5,
-        "subcore_radius": 1.8,
-        "edge_alpha": 0.1,            # 边更透明，减少干扰
-        "edge_arc_rad": 0.03,
-        "label_font_size": 11,
-        # 节点大小：拉大差异
-        "node_size_base": 500,        # 基础大小更小
-        "node_size_scale": 3500,      # 缩放系数更大，让高频词更大
-        "node_size_min": 500,
-        "node_size_max": 4000,
+        "core_node_count": 5,          # 核心节点精简，突出重点
+        "subcore_node_count": 15,      # 增加次核心节点数（边缘扩容1）
+        "periphery_node_count": 10,    # 新增：独立外围节点数（边缘扩容2）
+        "core_radius": 0.4,
+        "subcore_radius": 1.5,
+        "periphery_radius": 2.8,       # 外围层半径，物理隔离
+        "edge_alpha": 0.12,            # 边更透明
+        "edge_arc_rad": 0.02,
+        "label_font_size": 10,
+        # 节点大小：拉大差异，核心更突出
+        "node_size_base": 600,
+        "node_size_scale": 3000,
+        "node_size_min": 400,          # 边缘节点最小尺寸
+        "node_size_max": 4500,         # 核心节点最大尺寸
     }
 
 # ========== 实体清洗与过滤（核心优化，解决关键字不准确/空节点）==========
@@ -328,7 +330,7 @@ def _extract_key_sentences(text: str, top_k: int = 3) -> List[str]:
         selected = sentences[:top_k]
     return selected
 
-# ========== 核心函数1：抽取知识图谱（无空节点/关键字精准）==========
+# ========== 核心函数1：抽取知识图谱（应用强共现过滤）==========
 @YA_MCPServer_Tool(
     name="extract_knowledge_graph",
     title="Extract Knowledge Graph",
@@ -345,6 +347,7 @@ def extract_knowledge_graph(
     centrality_metric: Optional[str] = None,
     core_node_count: Optional[int] = None,
     subcore_node_count: Optional[int] = None,
+    periphery_node_count: Optional[int] = None,   # 新增参数
     core_radius: Optional[float] = None,
     subcore_radius: Optional[float] = None,
     periphery_radius: Optional[float] = None,
@@ -355,11 +358,11 @@ def extract_knowledge_graph(
     # 加载配置
     defaults = _load_kg_defaults()
     top_k_entities = int(defaults.get("top_k_entities", top_k_entities))
-    min_occur = int(defaults.get("min_occur", 3) if min_occur is None else min_occur)
+    min_occur = int(defaults.get("min_occur", 2) if min_occur is None else min_occur)
     min_len = int(defaults.get("min_len", 2) if min_len is None else min_len)
     max_len = int(defaults.get("max_len", 10) if max_len is None else max_len)
-    # 新增：共现阈值
-    min_edge_cooccurrence = int(defaults.get("min_edge_cooccurrence", 3) if min_edge_cooccurrence is None else min_edge_cooccurrence)
+    # 核心：强共现阈值
+    min_edge_cooccurrence = int(defaults.get("min_edge_cooccurrence", 4) if min_edge_cooccurrence is None else min_edge_cooccurrence)
     centrality_metric = str(defaults.get("centrality_metric", "pagerank") if centrality_metric is None else centrality_metric)
     # 构建黑名单（基础+定制）
     blacklist = set(ENTITY_BLACKLIST)
@@ -396,7 +399,7 @@ def extract_knowledge_graph(
         # 统计实体出现次数
         for e in ents:
             all_entities[e] = all_entities.get(e, 0) + 1
-    # 过滤低频实体
+    # 过滤低频实体（降低阈值，保留更多边缘节点）
     filtered_entities = {e: cnt for e, cnt in all_entities.items() if cnt >= min_occur}
     if not filtered_entities:
         filtered_entities = dict(all_entities)
@@ -404,7 +407,7 @@ def extract_knowledge_graph(
     ranked_entities = ranked_entities[: max(top_k_entities, 0)]
     candidate_set = {ent for ent, _ in ranked_entities}
     logger.info(f"过滤后候选实体（{len(candidate_set)}个）：{[e for e, _ in ranked_entities]}")
-    # 构建边：确保**两两节点仅一条边**，按共现次数加权
+    # 构建边：极致去重 + 强共现过滤
     from collections import defaultdict
     edge_counts = defaultdict(lambda: defaultdict(int))
     for ents in slide_entities:
@@ -417,12 +420,49 @@ def extract_knowledge_graph(
                 if a > b:  # 标准化边的key，避免(a,b)和(b,a)重复
                     a, b = b, a
                 edge_counts[a][b] += 1
-    # 过滤低共现边，精简杂乱边（使用新的共现阈值）
+    # 核心：只保留共现次数≥阈值的边，彻底减少边数量
     pruned_edge_counts = {}
     for a, others in edge_counts.items():
         for b, w in others.items():
             if w >= min_edge_cooccurrence:
                 pruned_edge_counts[(a, b)] = w
+
+     # 1. 先找出所有孤立节点（没有边的节点）
+    all_candidate_nodes = set(a for a, _ in ranked_entities)
+    nodes_with_edges = set()
+    for (a, b), _ in pruned_edge_counts.items():
+        nodes_with_edges.add(a)
+        nodes_with_edges.add(b)
+    isolated_nodes = all_candidate_nodes - nodes_with_edges
+
+    # 2. 为每个孤立节点，找到它共现次数最高的邻居，补一条边
+    for node in isolated_nodes:
+        # 找到该节点所有共现过的邻居
+        neighbors = []
+        if node in edge_counts:
+            for neighbor, w in edge_counts[node].items():
+                if neighbor != node:
+                    neighbors.append((neighbor, w))
+        # 也检查反向（node作为b的情况）
+        for a, others in edge_counts.items():
+            if node in others and a != node:
+                neighbors.append((a, others[node]))
+        if neighbors:
+            # 选共现次数最高的邻居
+            best_neighbor, best_w = max(neighbors, key=lambda x: x[1])
+            # 标准化key
+            if node > best_neighbor:
+                key = (best_neighbor, node)
+            else:
+                key = (node, best_neighbor)
+            # 补这条边（即使共现次数略低于阈值）
+            if key not in pruned_edge_counts:
+                pruned_edge_counts[key] = best_w
+
+    # 3. 再按权重排序，保留前25条边（比之前的15条多，保证连通性）
+    sorted_edges = sorted(pruned_edge_counts.items(), key=lambda x: x[1], reverse=True)
+    pruned_edge_counts = dict(sorted_edges[:45])  # 从15条提高到25条，保证连通性
+
     # 计算节点重要性
     try:
         import networkx as nx
@@ -462,7 +502,7 @@ def extract_knowledge_graph(
     # 日志统计
     logger.info(
         f"图谱抽取完成：原始实体{len(all_entities)}个 → 过滤后有效节点{len(nodes)}个 | "
-        f"原始边{sum(len(v) for v in edge_counts.values())}条 → 过滤后唯一边{len(edges)}条（共现阈值≥{min_edge_cooccurrence}）"
+        f"原始边{sum(len(v) for v in edge_counts.values())}条 → 过滤后强关联边{len(edges)}条（共现阈值≥{min_edge_cooccurrence}）"
     )
     return {"nodes": nodes, "edges": edges, "slides_summary": slide_summaries}
 
@@ -498,7 +538,7 @@ def write_kg_to_neo4j(
         if not label:
             continue
         props = {"name": label, "count": n.get("count", 0), "score": n.get("score", 0.0), "domain": "人工智能架构与系统"}
-        node = Node(node_label, **props)
+        node = Node(node_label,** props)
         graph.merge(node, node_label, "name")
         created_nodes += 1
     # 写入关系（保留权重）
@@ -526,11 +566,11 @@ def write_kg_to_neo4j(
     logger.info(f"Neo4j写入完成：节点{created_nodes}个，关系{created_rels}条")
     return {"nodes_created": created_nodes, "rels_created": created_rels}
 
-# ========== 核心函数3：导出可视化（无空节点/边不杂乱）==========
+# ========== 核心函数3：导出可视化（三层布局 + 动态节点大小）==========
 @YA_MCPServer_Tool(
     name="export_kg_visualization",
     title="Export KG Visualization",
-    description="导出AI知识图谱可视化，按重要性分层发散，无空节点、边不杂乱、节点清晰"
+    description="三层布局+强关联边+动态节点大小，图谱清晰聚焦"
 )
 def export_kg_visualization(
     kg: Dict, path: str = "kg.graphml", format: str = "graphml"
@@ -548,7 +588,7 @@ def export_kg_visualization(
         os.makedirs(out_dir, exist_ok=True)
         logger.info(f"创建导出目录：{out_dir}")
 
-    # ========== 关键修改：先过滤所有无意义/空标签节点 ==========
+    # ========== 关键过滤：只保留有效节点和边 ==========
     nodes = kg.get("nodes", [])
     edges = kg.get("edges", [])
 
@@ -556,7 +596,6 @@ def export_kg_visualization(
     valid_nodes = []
     valid_node_ids = set()
     node_label_map = {}  # id -> label
-    label_to_id = {}     # label -> id
     node_count_map = {}  # label -> count（出现次数）
     for n in nodes:
         label = n.get("label")
@@ -572,13 +611,12 @@ def export_kg_visualization(
         valid_nodes.append(n)
         valid_node_ids.add(n["id"])
         node_label_map[n["id"]] = label
-        label_to_id[label] = n["id"]
         node_count_map[label] = n.get("count", 1)  # 保存出现次数
     if not valid_nodes:
         logger.error("过滤后无有效节点，无法生成可视化")
         return {"path": path, "format": format, "error": "无有效节点"}
 
-    # 2. 过滤边：只保留两端都是有效节点的边
+    # 2. 过滤边：只保留两端都是有效节点的强关联边
     valid_edges = []
     for e in edges:
         src_id = e.get("source")
@@ -620,31 +658,37 @@ def export_kg_visualization(
             plt.rcParams['savefig.bbox'] = 'tight'       # 紧凑布局，裁剪空白
         except Exception as e:
             raise RuntimeError(f"matplotlib 未安装/配置失败：{e}，请安装：pip install matplotlib")
-        # 加载布局配置
+        # 加载布局配置（三层布局参数）
         defaults = _load_kg_defaults()
-        core_node_count = int(defaults.get("core_node_count", 6))
-        subcore_node_count = int(defaults.get("subcore_node_count", 12))
-        core_radius = float(defaults.get("core_radius", 0.5))
-        subcore_radius = float(defaults.get("subcore_radius", 1.8))
-        edge_alpha = float(defaults.get("edge_alpha", 0.15))
-        edge_arc_rad = float(defaults.get("edge_arc_rad", 0.03))
-        label_font_size = int(defaults.get("label_font_size", 11))
-        # 新增：节点大小缩放参数
-        node_size_base = int(defaults.get("node_size_base", 800))
-        node_size_scale = int(defaults.get("node_size_scale", 2000))
-        node_size_min = int(defaults.get("node_size_min", 500))
-        node_size_max = int(defaults.get("node_size_max", 4000))
+        core_node_count = int(defaults.get("core_node_count", 5))
+        subcore_node_count = int(defaults.get("subcore_node_count", 15))
+        periphery_node_count = int(defaults.get("periphery_node_count", 10))
+        core_radius = float(defaults.get("core_radius", 0.4))
+        subcore_radius = float(defaults.get("subcore_radius", 1.5))
+        periphery_radius = float(defaults.get("periphery_radius", 2.8))
+        edge_alpha = float(defaults.get("edge_alpha", 0.12))
+        edge_arc_rad = float(defaults.get("edge_arc_rad", 0.02))
+        label_font_size = int(defaults.get("label_font_size", 10))
+        # 节点大小缩放参数
+        node_size_base = int(defaults.get("node_size_base", 600))
+        node_size_scale = int(defaults.get("node_size_scale", 3000))
+        node_size_min = int(defaults.get("node_size_min", 400))
+        node_size_max = int(defaults.get("node_size_max", 4500))
 
-        # ========== 关键修改：只对有效节点进行分层布局 ==========
-        # 按重要性严格分层，核心向四周发散
+        # ========== 核心：三层节点分层（核心+次核心+外围）==========
         sorted_nodes = sorted(node_score_map.items(), key=lambda x: x[1], reverse=True)
-        core_nodes = [n for n, _ in sorted_nodes[:core_node_count]]  # 核心层（最中心）
-        subcore_nodes = [n for n, _ in sorted_nodes[core_node_count:core_node_count+subcore_node_count]]  # 次核心层
-        # 不再生成外围层，所有有效节点都在核心和次核心层
-        all_visible_nodes = core_nodes + subcore_nodes
-        logger.info(f"图谱分层：核心节点{core_nodes} | 次核心节点{len(subcore_nodes)}个 | 无外围空节点")
+        # 1. 核心节点（最中心，最大）
+        core_nodes = [n for n, _ in sorted_nodes[:core_node_count]]
+        # 2. 次核心节点（中层，中等大小，数量增加）
+        subcore_nodes = [n for n, _ in sorted_nodes[core_node_count:core_node_count+subcore_node_count]]
+        # 3. 外围节点（外层，最小，新增独立层级，扩容边缘）
+        periphery_nodes = [n for n, _ in sorted_nodes[core_node_count+subcore_node_count:core_node_count+subcore_node_count+periphery_node_count]]
+        
+        # 所有可见节点（三层合并）
+        all_visible_nodes = core_nodes + subcore_nodes + periphery_nodes
+        logger.info(f"三层布局：核心{len(core_nodes)}个 | 次核心{len(subcore_nodes)}个 | 外围{len(periphery_nodes)}个 | 总节点{len(all_visible_nodes)}个")
 
-        # 计算分层布局（圆形发散，无重叠）
+        # ========== 核心：分层布局计算（物理隔离，减少无效连接）==========
         pos = {}
         # 1. 核心节点：正中心紧凑布局
         core_count = len(core_nodes)
@@ -660,13 +704,26 @@ def export_kg_visualization(
             x = subcore_radius * math.cos(angle)
             y = subcore_radius * math.sin(angle)
             pos[node] = (x, y)
+        # 3. 外围节点：外层圆形布局（新增，边缘扩容）
+        periphery_count = len(periphery_nodes)
+        for i, node in enumerate(periphery_nodes):
+            angle = 2 * math.pi * i / periphery_count
+            x = periphery_radius * math.cos(angle)
+            y = periphery_radius * math.sin(angle)
+            pos[node] = (x, y)
 
-        # 过滤图G中的边，只保留两端都在pos中的边
+        # ========== 核心：二次过滤边（只保留可见节点的边）==========
         edges_to_draw = []
         for u, v, data in G.edges(data=True):
             if u in pos and v in pos:
                 edges_to_draw.append((u, v, data))
-        # 重建一个只包含可见节点和边的子图
+
+
+        # 按权重排序，只保留前10条最强边（可视化层最终过滤）
+        edges_to_draw.sort(key=lambda x: x[2].get("weight", 0), reverse=True)
+        edges_to_draw = edges_to_draw[:100]  # 可视化只渲染前10条最强边
+
+        # 重建可见子图
         G_visible = nx.Graph()
         for node in all_visible_nodes:
             if node in node_score_map:
@@ -674,72 +731,81 @@ def export_kg_visualization(
         for u, v, data in edges_to_draw:
             G_visible.add_edge(u, v, weight=data.get("weight", 1))
 
-        # 节点样式：颜色+大小双重区分层次，大小与出现次数挂钩
+        # ========== 节点样式：大小与出现次数强关联 + 三层颜色区分 ==========
         sizes = []
         node_colors = []
-        node_edgecolors = []  # 节点边框，增强区分度
-        # 计算最大出现次数，用于归一化
+        node_edgecolors = []
+        # 归一化出现次数（用于动态大小）
         max_count = max([d.get("count", 1) for _, d in G_visible.nodes(data=True)]) if G_visible.nodes() else 1
+        
         for n, data in G_visible.nodes(data=True):
             count = data.get("count", 1)
-            # 根据出现次数计算节点大小，归一化到[node_size_min, node_size_max]
+            # 动态大小计算：出现次数越多，节点越大
             if max_count > 1:
                 norm_count = (count - 1) / (max_count - 1)
             else:
                 norm_count = 0.5
             node_size = node_size_base + node_size_scale * norm_count
-            node_size = max(node_size_min, min(node_size_max, node_size))  # 限制在最小/最大范围内
+            node_size = max(node_size_min, min(node_size_max, node_size))
             sizes.append(node_size)
             
+            # 三层颜色区分
             if n in core_nodes:
-                node_colors.append("#1f77b4")  # 深蓝色（核心）
-                node_edgecolors.append("#ffffff")  # 白色粗边框
+                node_colors.append("#1f77b4")  # 深蓝（核心）
+                node_edgecolors.append("#ffffff")
             elif n in subcore_nodes:
                 node_colors.append("#ff7f0e")  # 橙色（次核心）
-                node_edgecolors.append("#ffffff")  # 白色边框
+                node_edgecolors.append("#ffffff")
             else:
-                # 所有其他节点（如果有）都用次核心样式，不再生成外围空点
-                node_colors.append("#ff7f0e")
+                node_colors.append("#2ca02c")  # 绿色（外围/边缘）
                 node_edgecolors.append("#ffffff")
 
-        # 边样式：粗细按权重+弧形+低透明度，解决边杂乱
+        # ========== 边样式：只保留强关联，粗细按权重 ==========
         edge_weights = [float(d.get("weight", 1)) for u, v, d in G_visible.edges(data=True)]
         max_w = max(edge_weights) if edge_weights else 1.0
-        edge_widths = [0.8 + 2.2 * (w / max_w) for w in edge_weights]  # 权重越大，边越粗
+        edge_widths = [0.5 + 2.5 * (w / max_w) for w in edge_weights]  # 强关联边更粗，弱关联更细
 
-        # 标签配置：仅显示核心+次核心，避免文字拥挤，标签带背景更清晰
-        label_nodes = set(core_nodes + subcore_nodes)
-        labels = {n: n for n in G_visible.nodes() if n in label_nodes}
+        # ========== 标签配置：核心全显，边缘按需显示 ==========
+        labels = {}
+        # 核心节点必显
+        for n in core_nodes:
+            labels[n] = n
+        # 次核心节点必显
+        for n in subcore_nodes:
+            labels[n] = n
+        # 外围节点可选（避免文字拥挤，此处选择显示）
+        for n in periphery_nodes:
+            labels[n] = n
 
-        # 开始绘图（大画布，适配分层布局）
-        plt.figure(figsize=(20, 16))
-        # 绘制边：弧形+低透明度，彻底解决边重叠/杂乱
+        # ========== 绘图执行 ==========
+        plt.figure(figsize=(22, 18))
+        # 绘制边：弧形+低透明，仅显示强关联
         nx.draw_networkx_edges(
             G_visible, pos,
             alpha=edge_alpha,
-            edge_color="#888888",  # 灰色边，不抢节点焦点
+            edge_color="#666666",
             width=edge_widths,
-            connectionstyle=f"arc3,rad={edge_arc_rad}"  # 弧形边，避免交叉重叠
+            connectionstyle=f"arc3,rad={edge_arc_rad}"
         )
-        # 绘制节点：带白色边框，大小与出现次数挂钩
+        # 绘制节点：动态大小+三层颜色
         nx.draw_networkx_nodes(
             G_visible, pos,
             node_size=sizes,
             node_color=node_colors,
-            alpha=0.95,
+            alpha=0.9,
             edgecolors=node_edgecolors,
-            linewidths=2 if core_node_count > 0 else 1  # 核心节点边框更粗
+            linewidths=2
         )
-        # 绘制标签：带半透明黑色背景，文字清晰不被遮挡
+        # 绘制标签：清晰背景
         nx.draw_networkx_labels(
             G_visible, pos, labels,
             font_size=label_font_size,
             font_family="sans-serif",
             font_weight="bold",
             font_color="white",
-            bbox=dict(boxstyle="round,pad=0.3", facecolor="black", alpha=0.7)  # 标签背景
+            bbox=dict(boxstyle="round,pad=0.25", facecolor="black", alpha=0.7)
         )
-        # 美化：隐藏坐标轴，紧凑布局
+        # 美化
         plt.axis("off")
         plt.tight_layout()
         plt.savefig(path, dpi=300, bbox_inches="tight", pad_inches=0.1)
@@ -749,7 +815,7 @@ def export_kg_visualization(
         raise ValueError(f"不支持的导出格式: {format}，仅支持graphml/gexf/png")
     return {"path": path, "format": fmt, "node_count": len(G.nodes()), "edge_count": len(G.edges())}
 
-# ========== 核心函数4：一站式处理（抽取+导出+可选写入Neo4j）==========
+# ========== 核心函数4：一站式处理（传递所有参数）==========
 @YA_MCPServer_Tool(
     name="process_and_publish_kg",
     title="Process and Publish KG",
@@ -762,10 +828,11 @@ def process_and_publish_kg(
     min_occur: Optional[int] = None,
     min_len: Optional[int] = None,
     max_len: Optional[int] = None,
-    min_edge_cooccurrence: Optional[int] = None,  # 新增参数
+    min_edge_cooccurrence: Optional[int] = None,
     centrality_metric: Optional[str] = None,
     core_node_count: Optional[int] = None,
     subcore_node_count: Optional[int] = None,
+    periphery_node_count: Optional[int] = None,
     core_radius: Optional[float] = None,
     subcore_radius: Optional[float] = None,
     periphery_radius: Optional[float] = None,
@@ -781,7 +848,7 @@ def process_and_publish_kg(
     neo_result = None
     export_result = None
     try:
-        # 1. 抽取图谱（传递共现阈值）
+        # 1. 抽取图谱（传递强共现阈值）
         kg = extract_knowledge_graph(
             ppt_path=ppt_path,
             text=text,
@@ -793,6 +860,7 @@ def process_and_publish_kg(
             centrality_metric=centrality_metric,
             core_node_count=core_node_count,
             subcore_node_count=subcore_node_count,
+            periphery_node_count=periphery_node_count,
             core_radius=core_radius,
             subcore_radius=subcore_radius,
             periphery_radius=periphery_radius,
@@ -837,3 +905,26 @@ def process_and_publish_kg(
             "export_result": {"error": str(exc)},
             "status": "failed"
         }
+
+# ========== 测试入口 ==========
+if __name__ == "__main__":
+    # 测试：替换为你的PPT路径
+    TEST_PPT_PATH = "1.pptx"
+    # 一站式处理：强过滤+三层布局
+    result = process_and_publish_kg(
+        ppt_path=TEST_PPT_PATH,
+        export_format="png",
+        export_path="ai_architecture_kg_final",
+        min_edge_cooccurrence=4,  # 强共现阈值，边极少
+        write_neo4j=False
+    )
+    # 打印结果统计
+    print("="*60)
+    print("AI架构与系统知识图谱（最终优化版）提取结果")
+    print("="*60)
+    print(f"处理状态：{result['status']}")
+    print(f"有效节点数：{len(result['kg']['nodes'])}")
+    print(f"强关联边数：{len(result['kg']['edges'])}")
+    print(f"可视化文件：{result['export_result'].get('path', '未导出')}")
+    if result['kg']['nodes']:
+        print(f"核心节点（按重要性）：{[n['label'] for n in result['kg']['nodes'][:5]]}")
