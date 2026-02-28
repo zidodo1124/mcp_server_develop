@@ -8,7 +8,7 @@
 | :--: | :------: | :--: | :--: |
 |支盟渊|U202414620|增加了resource和prompts文件，进行了tools的基础编写，进行了最终的调试测试|在两个项目中有工作，仅在本项目（不转大创）中进行了工作记录|
 |曾子渊|U202414616|进行了tools编写，优化了知识图谱输出|      |
-|龙  武|U202414603|进行了tools文件编写，完成了知识提取工作，优化了知识图谱输出|      |
+|龙  武|U202414603|进行了tools文件编写，应用了相关算法,完成了知识提取工作，优化了知识图谱输出|      |
 
 ### Tool 列表
 
@@ -59,7 +59,7 @@
 ├── scripts/               # 命令行可直接运行的脚本目录（新增了下面的文件）
 │   ├── kg_cli.py          # 知识图谱功能命令行脚本
 │   └── mcp_client_example.py # MCP 客户端示例脚本
-├── tools/                 # 工具类目录（新增了下面的文件）
+├── tools/                 # 工具类目录（新增了下面的文件，用于从ppt中提取知识并且生成知识图谱）
 │   └── kg_tool.py         # 知识图谱核心工具脚本
 ├── README.md              # 项目说明文档
 ├── server.py              # 服务启动入口文件
@@ -67,9 +67,116 @@
 ```
 ### 其他需要说明的情况
 
-- 在 `sops` 模块中添加的密钥变量分别用于什么功能
-- 是否使用了 PyTorch、Tensorflow 等深度学习框架
 - 无
+
+## 相关算法以及模型的使用：
+# 知识图谱构建系统 - 算法模型与工具清单
+
+## 一、核心算法模型
+
+### 1. 实体提取算法
+def _simple_entity_extraction(text: str, top_k: int = 50) -> List[str]:
+    # 功能：从文本中提取AI领域专业名词实体，结合白名单优先匹配和jieba词性标注
+    pass
+
+### 2. 实体过滤算法
+def _is_valid_entity(entity: str, min_len: int, max_len: int, blacklist: set) -> bool:
+    # 功能：多层级过滤实体（长度、黑名单、人名识别、虚词比例、词性校验），确保节点有效性
+    pass
+
+### 3. PageRank 算法
+def _compute_node_scores(graph, metric: str = "pagerank") -> Dict[str, float]:
+    nx.pagerank(graph, alpha=0.85, weight="weight")
+    # 功能：计算节点重要性，默认使用PageRank中心性指标
+    pass
+
+### 4. 度中心性算法
+{n: float(v) for n, v in graph.degree(weight="weight")}
+# 功能：备用方案，基于节点度数计算重要性
+
+### 5. 介数中心性算法
+nx.betweenness_centrality(graph, normalized=True, weight="weight")
+# 功能：可选指标，计算节点作为桥梁的重要性
+
+### 6. 共现分析算法
+edge_counts = defaultdict(lambda: defaultdict(int))
+for i in range(len(uniq)):
+    for j in range(i + 1, len(uniq)):
+        edge_counts[a][b] += 1
+# 功能：统计实体在同一幻灯片中的共现次数，构建共现矩阵
+
+### 7. 三层布局算法
+angle = 2 * math.pi * i / core_count
+x = core_radius * math.cos(angle)
+y = core_radius * math.sin(angle)
+# 功能：将节点分为核心、次核心、外围三层，使用极坐标进行物理隔离布局
+
+### 8. 节点大小动态计算
+norm_count = (count - 1) / (max_count - 1)
+node_size = node_size_base + node_size_scale * norm_count
+# 功能：基于实体出现次数线性缩放节点大小，突出重要节点
+
+### 9. 关键词提取算法
+jieba.analyse.extract_tags(text, topK=20, withWeight=True)
+# 功能：提取文本关键词，用于关键句评分（降级方案）
+
+### 10. 孤立节点处理算法
+best_neighbor, best_w = max(neighbors, key=lambda x: x[1])
+pruned_edge_counts[key] = best_w
+# 功能：为孤立节点找到共现次数最高的邻居并补边，确保图连通性
+
+## 二、重要工具 / 框架
+
+### python-pptx
+from pptx import Presentation
+prs = Presentation(path)
+# 功能：解析PPTX文件，提取幻灯片中的文本内容
+
+### jieba 分词
+import jieba
+words = jieba.lcut(text)
+# 功能：中文分词，将文本切分为词语单元
+
+### jieba.posseg（词性标注）
+import jieba.posseg as pseg
+words = pseg.cut(text)
+# 功能：中文分词并标注词性（名词、动词、形容词等）
+
+### jieba.analyse（关键词提取）
+import jieba.analyse as analyse
+tags = analyse.extract_tags(text, topK=20)
+# 功能：基于TF-IDF算法提取文本关键词
+
+### networkx（图分析库）
+import networkx as nx
+G = nx.Graph()
+nx.pagerank(G)
+# 功能：图数据结构、中心性计算、图算法支持
+
+### matplotlib（可视化库）
+import matplotlib.pyplot as plt
+plt.savefig(path, dpi=300)
+# 功能：绘制知识图谱可视化图像，支持PNG导出
+
+### py2neo（Neo4j 客户端）
+from py2neo import Graph, Node, Relationship
+graph.merge(node, node_label, "name")
+# 功能：连接Neo4j图数据库，写入节点和关系
+
+### re（正则表达式）
+import re
+re.split(r"(?<=[。！？；\n])\s*", text)
+# 功能：文本分句、模式匹配、实体清洗过滤
+
+### collections.defaultdict
+from collections import defaultdict
+edge_counts = defaultdict(lambda: defaultdict(int))
+# 功能：构建共现矩阵，统计实体对出现次数
+
+### math（数学库）
+import math
+angle = 2 * math.pi * i / count
+# 功能：计算布局角度，支持极坐标转换
 
 ## 使用示例
 
