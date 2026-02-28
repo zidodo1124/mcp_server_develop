@@ -6,9 +6,9 @@
 
 | 姓名 | 学    号 | 分工 | 备注 |
 | :--: | :------: | :--: | :--: |
-|支盟渊|U202414620|  |在两个项目中有工作，仅在本项目（不转大创）中进行了工作记录|
-|曾子渊|U202414616|      |      |
-|龙  武|U202414603|      |      |
+|支盟渊|U202414620|增加了resource和prompts文件，进行了tools的基础编写，进行了最终的调试测试|在两个项目中有工作，仅在本项目（不转大创）中进行了工作记录|
+|曾子渊|U202414616|进行了tools编写，优化了知识图谱输出|      |
+|龙  武|U202414603|进行了tools编写，完成了知识提取工作，优化了知识图谱输出工作|      |
 
 ### Tool 列表
 
@@ -49,6 +49,27 @@
 - `config.yaml`: [XXXX(添加 XX 额外配置)]
 - [XXXX(其他新添加的文件与目录介绍)]
 
+## 项目结构
+├── core/ # 核心业务逻辑模块
+├── data/ # 数据存储目录
+├── docs/ # 项目文档目录（如设计文档、接口文档等）
+├── logs/ # 日志文件存储目录
+├── modules/ # 功能模块目录
+├── out/ # 输出图片所在文件夹
+├── ppts/ # 测试用 PPT 文件目录（可选取其中 PPT 作为输入）
+├── prompts/ # 提示词配置目录
+│ ├── kg_extract_prompt.py # 知识提取提示词定义
+│ └── kg_generate_prompt.py # 图片生成提示词定义
+├── resources/ # 资源配置目录
+│ └── kg_resources.py # 知识图谱相关资源配置
+├── scripts/ # 命令行可直接运行的脚本目录
+│ ├── kg_cli.py # 知识图谱功能命令行脚本
+│ └── mcp_client_example.py # MCP 客户端示例脚本
+├── tools/ # 工具类目录
+│ └── kg_tool.py # 知识图谱核心工具脚本
+├── README.md # 项目说明文档
+├── server.py # 服务启动入口文件
+└── setup.py # 项目安装 / 配置脚本
 ### 其他需要说明的情况
 
 - 在 `sops` 模块中添加的密钥变量分别用于什么功能
@@ -79,3 +100,14 @@ python scripts/mcp_client_example.py --ppt path/to/ai_chapter.pptx --export-form
 示例行为：调用 `process_and_publish_kg`，返回 `kg`、`neo_result`、`export_result`。
 
 请参阅 `scripts/mcp_client_example.py` 了解细节。
+
+### 3) 在 MCP Inspector 中调用
+#### 操作步骤
+1. 命令行环境初始化完成后，启动 `mcp inspector`；
+2. 在工具列表中选择 **tools 目录下最后一个工具**（该工具为通用型，最适合功能测试）；
+3. 按要求输入以下参数：
+   - PPT 文件路径（示例：`.\\ppts\\1.pptx`）
+   - 输出文件格式（示例：`png`）
+   - 输出路径（示例：`.\\out\\result`）
+4. 其余参数可参考文件：`C:\Users\lx\Desktop\YA_MCPServer_Template\tools\kg_tool.py`；
+5. 执行 `run tool` 即可完成调用，后续可在文件中找到输出的图片。

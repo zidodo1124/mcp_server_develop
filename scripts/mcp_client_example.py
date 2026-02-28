@@ -9,7 +9,13 @@ import json
 import subprocess
 import sys
 from pathlib import Path
+import os
 
+# ========== 添加这段路径导入代码 ==========
+# 获取脚本所在目录的上一级（项目根目录）
+ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, ROOT_DIR)
+# ======================================
 
 def main():
     p = argparse.ArgumentParser()
