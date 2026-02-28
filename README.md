@@ -8,7 +8,7 @@
 | :--: | :------: | :--: | :--: |
 |支盟渊|U202414620|增加了resource和prompts文件，进行了tools的基础编写，进行了最终的调试测试|在两个项目中有工作，仅在本项目（不转大创）中进行了工作记录|
 |曾子渊|U202414616|进行了tools编写，优化了知识图谱输出|      |
-|龙  武|U202414603|进行了tools编写，完成了知识提取工作，优化了知识图谱输出工作|      |
+|龙  武|U202414603|进行了tools文件编写，完成了知识提取工作，优化了知识图谱输出|      |
 
 ### Tool 列表
 
@@ -42,13 +42,6 @@
 | `extract_knowledge_from_ppt` | 从AI导论课程PPT中提取核心知识点 | `ppt_path` (str): PPT文件路径 | 知识提取提示词 | 调用 `extract_knowledge_graph` 工具 |
 | `generate_knowledge_graph` | 根据提取的知识生成知识点图谱并导出 | `ppt_path` (str): PPT文件路径<br>`export_format` (str): 导出格式（默认"png"）<br>`export_path` (str): 导出路径（默认"./kg_output"）<br>`min_edge_cooccurrence` (int): 边共现阈值（默认4） | 知识图谱生成提示词 | 调用 `process_and_publish_kg` 工具，支持PNG/GraphML/GEXF格式 |
 
-### 项目结构
-
-- `core`: [XXXX]
-- `tools`: [XXXX]
-- `config.yaml`: [XXXX(添加 XX 额外配置)]
-- [XXXX(其他新添加的文件与目录介绍)]
-
 ## 项目结构
 ```text
 ├── core/                  # 核心业务逻辑模块
@@ -58,15 +51,15 @@
 ├── modules/               # 功能模块目录
 ├── out/                   # 输出图片所在文件夹
 ├── ppts/                  # 测试用 PPT 文件目录（可选取其中 PPT 作为输入）
-├── prompts/               # 提示词配置目录
+├── prompts/               # 提示词配置目录(新增了下面的两个文件)
 │   ├── kg_extract_prompt.py  # 知识提取提示词定义
 │   └── kg_generate_prompt.py # 图片生成提示词定义
-├── resources/             # 资源配置目录
+├── resources/             # 资源配置目录（新增了下面的一个文件）
 │   └── kg_resources.py    # 知识图谱相关资源配置
-├── scripts/               # 命令行可直接运行的脚本目录
+├── scripts/               # 命令行可直接运行的脚本目录（新增了下面的文件）
 │   ├── kg_cli.py          # 知识图谱功能命令行脚本
 │   └── mcp_client_example.py # MCP 客户端示例脚本
-├── tools/                 # 工具类目录
+├── tools/                 # 工具类目录（新增了下面的文件）
 │   └── kg_tool.py         # 知识图谱核心工具脚本
 ├── README.md              # 项目说明文档
 ├── server.py              # 服务启动入口文件
@@ -76,9 +69,7 @@
 
 - 在 `sops` 模块中添加的密钥变量分别用于什么功能
 - 是否使用了 PyTorch、Tensorflow 等深度学习框架
-- 是否使用了机器学习、深度学习模型
-# mcp_server_develop
-For zmy,zzy,lw,these three person to develop their mcp server
+- 无
 
 ## 使用示例
 
