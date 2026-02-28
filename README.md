@@ -203,11 +203,13 @@ python scripts/mcp_client_example.py --ppt path/to/ai_chapter.pptx --export-form
 
 ### 3) 在 MCP Inspector 中调用
 #### 操作步骤
-1. 命令行环境初始化完成后，启动 `mcp inspector`；
+1. 命令行环境初始化完成后，启动 `mcp inspector`
+        cd 文件路径 ->  uv sync  ->  .venv\Scripts\activate  -> uv run server.py -> mcp dev server.py
+
 2. 在工具列表中选择 **tools 目录下最后一个工具**（该工具为通用型，最适合功能测试）；
 3. 按要求输入以下参数：
-   - PPT 文件路径（示例：`.\\ppts\\1.pptx`）
+   - PPT 文件路径（示例：`.\1.pptx`）
    - 输出文件格式（示例：`png`）
-   - 输出路径（示例：`.\\out\\result`）
+   - 输出路径（示例：`.\result`）
 4. 其余参数可参考文件：`C:\Users\lx\Desktop\YA_MCPServer_Template\tools\kg_tool.py`；
 5. 执行 `run tool` 即可完成调用，后续可在文件中找到输出的图片。
