@@ -1,0 +1,280 @@
+<?xml version='1.0' encoding='utf-8'?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd"><key id="d2" for="edge" attr.name="weight" attr.type="long"/>
+<key id="d1" for="node" attr.name="score" attr.type="double"/>
+<key id="d0" for="node" attr.name="count" attr.type="long"/>
+<graph edgedefault="undirected"><node id="TPU">
+  <data key="d0">22</data>
+  <data key="d1">462.0</data>
+</node>
+<node id="数据">
+  <data key="d0">22</data>
+  <data key="d1">308.0</data>
+</node>
+<node id="智能交换机">
+  <data key="d0">22</data>
+  <data key="d1">286.0</data>
+</node>
+<node id="流水线并行">
+  <data key="d0">22</data>
+  <data key="d1">66.0</data>
+</node>
+<node id="类脑芯片">
+  <data key="d0">22</data>
+  <data key="d1">66.0</data>
+</node>
+<node id="设计">
+  <data key="d0">22</data>
+  <data key="d1">66.0</data>
+</node>
+<node id="系统">
+  <data key="d0">22</data>
+  <data key="d1">66.0</data>
+</node>
+<node id="框架">
+  <data key="d0">22</data>
+  <data key="d1">66.0</data>
+</node>
+<node id="神经网络训练任务">
+  <data key="d0">22</data>
+  <data key="d1">66.0</data>
+</node>
+<node id="模型">
+  <data key="d0">22</data>
+  <data key="d1">66.0</data>
+</node>
+<node id="神经网络">
+  <data key="d0">22</data>
+  <data key="d1">66.0</data>
+</node>
+<node id="训练">
+  <data key="d0">22</data>
+  <data key="d1">66.0</data>
+</node>
+<node id="芯片">
+  <data key="d0">22</data>
+  <data key="d1">66.0</data>
+</node>
+<node id="数据并行">
+  <data key="d0">22</data>
+  <data key="d1">44.0</data>
+</node>
+<node id="架构">
+  <data key="d0">22</data>
+  <data key="d1">44.0</data>
+</node>
+<node id="微计算模式">
+  <data key="d0">22</data>
+  <data key="d1">22.0</data>
+</node>
+<node id="人工智能芯片">
+  <data key="d0">22</data>
+  <data key="d1">22.0</data>
+</node>
+<node id="冯诺依曼结构">
+  <data key="d0">22</data>
+  <data key="d1">22.0</data>
+</node>
+<node id="人工智能算法">
+  <data key="d0">22</data>
+  <data key="d1">22.0</data>
+</node>
+<node id="推理">
+  <data key="d0">22</data>
+  <data key="d1">22.0</data>
+</node>
+<node id="人工智能系统">
+  <data key="d0">22</data>
+  <data key="d1">22.0</data>
+</node>
+<node id="XPU">
+  <data key="d0">22</data>
+  <data key="d1">22.0</data>
+</node>
+<node id="图灵奖">
+  <data key="d0">22</data>
+  <data key="d1">22.0</data>
+</node>
+<node id="GPU">
+  <data key="d0">22</data>
+  <data key="d1">0.0</data>
+</node>
+<node id="Ring AllReduce">
+  <data key="d0">22</data>
+  <data key="d1">0.0</data>
+</node>
+<node id="DSP">
+  <data key="d0">22</data>
+  <data key="d1">0.0</data>
+</node>
+<node id="FLOPs">
+  <data key="d0">22</data>
+  <data key="d1">0.0</data>
+</node>
+<node id="参数服务器">
+  <data key="d0">22</data>
+  <data key="d1">0.0</data>
+</node>
+<node id="张量并行">
+  <data key="d0">22</data>
+  <data key="d1">0.0</data>
+</node>
+<node id="基础">
+  <data key="d0">22</data>
+  <data key="d1">0.0</data>
+</node>
+<node id="存算分离">
+  <data key="d0">22</data>
+  <data key="d1">0.0</data>
+</node>
+<node id="SmartNIC">
+  <data key="d0">22</data>
+  <data key="d1">0.0</data>
+</node>
+<node id="人工智能基础软硬件">
+  <data key="d0">22</data>
+  <data key="d1">0.0</data>
+</node>
+<node id="定量">
+  <data key="d0">22</data>
+  <data key="d1">0.0</data>
+</node>
+<node id="人工智能">
+  <data key="d0">22</data>
+  <data key="d1">0.0</data>
+</node>
+<edge source="TPU" target="智能交换机">
+  <data key="d2">22</data>
+</edge>
+<edge source="TPU" target="数据">
+  <data key="d2">22</data>
+</edge>
+<edge source="TPU" target="流水线并行">
+  <data key="d2">22</data>
+</edge>
+<edge source="TPU" target="数据并行">
+  <data key="d2">22</data>
+</edge>
+<edge source="TPU" target="类脑芯片">
+  <data key="d2">22</data>
+</edge>
+<edge source="TPU" target="微计算模式">
+  <data key="d2">22</data>
+</edge>
+<edge source="TPU" target="人工智能芯片">
+  <data key="d2">22</data>
+</edge>
+<edge source="TPU" target="冯诺依曼结构">
+  <data key="d2">22</data>
+</edge>
+<edge source="TPU" target="人工智能算法">
+  <data key="d2">22</data>
+</edge>
+<edge source="TPU" target="设计">
+  <data key="d2">22</data>
+</edge>
+<edge source="TPU" target="系统">
+  <data key="d2">22</data>
+</edge>
+<edge source="TPU" target="推理">
+  <data key="d2">22</data>
+</edge>
+<edge source="TPU" target="框架">
+  <data key="d2">22</data>
+</edge>
+<edge source="TPU" target="神经网络训练任务">
+  <data key="d2">22</data>
+</edge>
+<edge source="TPU" target="模型">
+  <data key="d2">22</data>
+</edge>
+<edge source="TPU" target="人工智能系统">
+  <data key="d2">22</data>
+</edge>
+<edge source="TPU" target="神经网络">
+  <data key="d2">22</data>
+</edge>
+<edge source="TPU" target="训练">
+  <data key="d2">22</data>
+</edge>
+<edge source="TPU" target="芯片">
+  <data key="d2">22</data>
+</edge>
+<edge source="TPU" target="XPU">
+  <data key="d2">22</data>
+</edge>
+<edge source="TPU" target="图灵奖">
+  <data key="d2">22</data>
+</edge>
+<edge source="数据" target="智能交换机">
+  <data key="d2">22</data>
+</edge>
+<edge source="数据" target="流水线并行">
+  <data key="d2">22</data>
+</edge>
+<edge source="数据" target="数据并行">
+  <data key="d2">22</data>
+</edge>
+<edge source="数据" target="类脑芯片">
+  <data key="d2">22</data>
+</edge>
+<edge source="数据" target="设计">
+  <data key="d2">22</data>
+</edge>
+<edge source="数据" target="系统">
+  <data key="d2">22</data>
+</edge>
+<edge source="数据" target="框架">
+  <data key="d2">22</data>
+</edge>
+<edge source="数据" target="神经网络训练任务">
+  <data key="d2">22</data>
+</edge>
+<edge source="数据" target="模型">
+  <data key="d2">22</data>
+</edge>
+<edge source="数据" target="神经网络">
+  <data key="d2">22</data>
+</edge>
+<edge source="数据" target="训练">
+  <data key="d2">22</data>
+</edge>
+<edge source="数据" target="芯片">
+  <data key="d2">22</data>
+</edge>
+<edge source="数据" target="架构">
+  <data key="d2">22</data>
+</edge>
+<edge source="智能交换机" target="流水线并行">
+  <data key="d2">22</data>
+</edge>
+<edge source="智能交换机" target="类脑芯片">
+  <data key="d2">22</data>
+</edge>
+<edge source="智能交换机" target="设计">
+  <data key="d2">22</data>
+</edge>
+<edge source="智能交换机" target="系统">
+  <data key="d2">22</data>
+</edge>
+<edge source="智能交换机" target="框架">
+  <data key="d2">22</data>
+</edge>
+<edge source="智能交换机" target="神经网络训练任务">
+  <data key="d2">22</data>
+</edge>
+<edge source="智能交换机" target="模型">
+  <data key="d2">22</data>
+</edge>
+<edge source="智能交换机" target="神经网络">
+  <data key="d2">22</data>
+</edge>
+<edge source="智能交换机" target="训练">
+  <data key="d2">22</data>
+</edge>
+<edge source="智能交换机" target="芯片">
+  <data key="d2">22</data>
+</edge>
+<edge source="智能交换机" target="架构">
+  <data key="d2">22</data>
+</edge>
+</graph></graphml>
