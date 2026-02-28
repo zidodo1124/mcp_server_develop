@@ -50,26 +50,26 @@
 - [XXXX(其他新添加的文件与目录介绍)]
 
 ## 项目结构
-├── core/ # 核心业务逻辑模块
-├── data/ # 数据存储目录
-├── docs/ # 项目文档目录（如设计文档、接口文档等）
-├── logs/ # 日志文件存储目录
-├── modules/ # 功能模块目录
-├── out/ # 输出图片所在文件夹
-├── ppts/ # 测试用 PPT 文件目录（可选取其中 PPT 作为输入）
-├── prompts/ # 提示词配置目录
-│ ├── kg_extract_prompt.py # 知识提取提示词定义
-│ └── kg_generate_prompt.py # 图片生成提示词定义
-├── resources/ # 资源配置目录
-│ └── kg_resources.py # 知识图谱相关资源配置
-├── scripts/ # 命令行可直接运行的脚本目录
-│ ├── kg_cli.py # 知识图谱功能命令行脚本
-│ └── mcp_client_example.py # MCP 客户端示例脚本
-├── tools/ # 工具类目录
-│ └── kg_tool.py # 知识图谱核心工具脚本
-├── README.md # 项目说明文档
-├── server.py # 服务启动入口文件
-└── setup.py # 项目安装 / 配置脚本
+├── core/                  # 核心业务逻辑模块
+├── data/                  # 数据存储目录
+├── docs/                  # 项目文档目录（如设计文档、接口文档等）
+├── logs/                  # 日志文件存储目录
+├── modules/               # 功能模块目录
+├── out/                   # 输出图片所在文件夹
+├── ppts/                  # 测试用 PPT 文件目录（可选取其中 PPT 作为输入）
+├── prompts/               # 提示词配置目录
+│   ├── kg_extract_prompt.py  # 知识提取提示词定义
+│   └── kg_generate_prompt.py # 图片生成提示词定义
+├── resources/             # 资源配置目录
+│   └── kg_resources.py    # 知识图谱相关资源配置
+├── scripts/               # 命令行可直接运行的脚本目录
+│   ├── kg_cli.py          # 知识图谱功能命令行脚本
+│   └── mcp_client_example.py # MCP 客户端示例脚本
+├── tools/                 # 工具类目录
+│   └── kg_tool.py         # 知识图谱核心工具脚本
+├── README.md              # 项目说明文档
+├── server.py              # 服务启动入口文件
+└── setup.py               # 项目安装 / 配置脚本
 ### 其他需要说明的情况
 
 - 在 `sops` 模块中添加的密钥变量分别用于什么功能
